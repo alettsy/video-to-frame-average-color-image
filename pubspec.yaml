@@ -1,5 +1,5 @@
 name: video_to_frame_color_image
-description: "Convert a video to an image made up of columns of the average color of each interval frame."
+description: "Using Flutter and Rust to convert a video to an image made up of columns of the average color of each interval frame."
 publish_to: 'none'
 version: 1.0.0+1
 
