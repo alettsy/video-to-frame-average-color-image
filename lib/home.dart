@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Video to Frame Color Image')),
+      appBar: AppBar(title: const Text('Video to Frame Average Color Image')),
       body: Center(
         child: SizedBox(
           width: min(MediaQuery.of(context).size.width * 0.8, 400),
