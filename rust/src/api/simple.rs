@@ -41,7 +41,7 @@ fn get_colors_of_frames(path: String, interval: u32) -> Result<Vec<(u8, u8, u8)>
 
     let mut pixels: Vec<(u8, u8, u8)> = Vec::new();
 
-    for i in 0..length as u32 {
+    for i in 0..length {
         if i % interval == 0 {
             get_frame_at_time(&path, &format_seconds(i));
             let frame_path = temp_dir().as_path().join("frame.jpg");
@@ -82,8 +82,6 @@ pub fn get_video_seconds_helper(path: String) -> u32 {
 fn average_color_in_image(img: &image::DynamicImage) -> Result<(u8, u8, u8), Error> {
     let (width, height) = img.dimensions();
     let total_pixels = width * height;
-
-    let mut pixel_average = (0.0, 0.0, 0.0);
 
     let sum = img.pixels().fold((0.0, 0.0, 0.0), |acc, p| {
         (
