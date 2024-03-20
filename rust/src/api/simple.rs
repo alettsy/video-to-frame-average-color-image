@@ -45,7 +45,7 @@ fn get_colors_of_frames(path: String, interval: u32) -> Result<Vec<(u8, u8, u8)>
 
     for i in 0..length as u32 {
         if i % interval == 0 {
-            get_frame_at_time(&path, &format_seconds(interval));
+            get_frame_at_time(&path, &format_seconds(i));
             let frame_path = temp_dir().as_path().join("frame.jpg");
             let img = image::open(frame_path).expect("Failed to open frame image");
             let pixel = average_color_in_image(&img).expect("Failed to get pixel");
@@ -63,10 +63,15 @@ fn format_seconds(seconds: u32) -> String {
     format!("{:02}:{:02}:{:02}", hours, minutes, seconds)
 }
 
+#[flutter_rust_bridge::frb(sync)]
 fn get_video_seconds(path: &String) -> Result<u32, Error> {
     let output = Command::new("ffprobe").args(&["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", &*path]).output().expect("failed");
     let result = stdout_to_int(output.stdout).expect("Failed to get video length");
     Ok(result)
+}
+
+pub fn get_video_seconds_helper(path: String) -> u32 {
+    get_video_seconds(&path).expect("Failed to get video seconds")
 }
 
 fn average_color_in_image(img: &image::DynamicImage) -> Result<(u8, u8, u8), Error> {

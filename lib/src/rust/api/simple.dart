@@ -21,3 +21,6 @@ void generateImage(
         pixelWidth: pixelWidth,
         height: height,
         hint: hint);
+
+Future<int> getVideoSecondsHelper({required String path, dynamic hint}) =>
+    RustLib.instance.api.getVideoSecondsHelper(path: path, hint: hint);
