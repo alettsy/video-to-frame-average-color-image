@@ -6,9 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-String greet({required String name, dynamic hint}) =>
-    RustLib.instance.api.greet(name: name, hint: hint);
-
+/// Generate the image of size [pixel_width] * video time in seconds x [height] from
+/// the video at [path] based on the frames at each [interval] seconds.
 void generateImage(
         {required String path,
         required int interval,
@@ -22,5 +21,9 @@ void generateImage(
         height: height,
         hint: hint);
 
+/// This function is only used in calls from the Dart code.
+///
+/// The helper function was needed due to an issue with &String and
+/// &str parameters.
 Future<int> getVideoSecondsHelper({required String path, dynamic hint}) =>
     RustLib.instance.api.getVideoSecondsHelper(path: path, hint: hint);
