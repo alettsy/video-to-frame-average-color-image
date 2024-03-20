@@ -60,3 +60,10 @@ For fun, of course!
 I remember a few years back I saw a photo on social media of an image
 made of a column of the average colors from frames of a movie and I
 finally decided to try and re-create it!
+
+## Future Plans 
+
+- Use a generator to yield a count each time a new 
+  frame is processed in order to show a progress
+  percentage when generating on the Flutter app 
+- Parallelization 
