@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,21 +37,43 @@ class _Step3State extends State<Step3> {
     });
   }
 
-  void generate(String path, int interval, int pixelWidth, int height) async {
-    await Isolate.run(() async {
-      await RustLib.init();
-      generateImage(
-        path: path,
-        interval: interval,
-        pixelWidth: pixelWidth,
-        height: height,
-      );
-    });
+  Future<void> deleteOldFiles() async {
+    final temp = await getTemporaryDirectory();
 
-    setGenerating(false);
+    if (temp != null) {
+      final outputFile = File('${temp.path}/output.jpg');
+      final frameFile = File('${temp.path}/frame.jpg');
+
+      if (outputFile.existsSync()) {
+        outputFile.deleteSync();
+      }
+
+      if (frameFile.existsSync()) {
+        frameFile.deleteSync();
+      }
+    }
   }
 
-  void goHome(BuildContext context) async {
+  Future<void> generate(
+      String path, int interval, int pixelWidth, int height) async {
+    try {
+      await deleteOldFiles();
+
+      await Isolate.run(() async {
+        await RustLib.init();
+        generateImage(
+          path: path,
+          interval: interval,
+          pixelWidth: pixelWidth,
+          height: height,
+        );
+      });
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  Future<void> goHome(BuildContext context) async {
     if (!saved) {
       final choice = await confirmDialog(context);
       if (choice == null || !choice) {
@@ -108,10 +131,11 @@ class _Step3State extends State<Step3> {
       appBar: AppBar(title: const Text('Video to Frame Color Image')),
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width / 2,
+          width: min(MediaQuery.of(context).size.width * 0.8, 400),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               generating
                   ? const Column(
@@ -128,12 +152,13 @@ class _Step3State extends State<Step3> {
                         if (snapshot.hasData && snapshot.data != null) {
                           return Column(
                             children: [
-                              Image.file(snapshot.data!,
-                                  width: 300, height: 200, fit: BoxFit.cover,
+                              Image.file(snapshot.data!, fit: BoxFit.scaleDown,
                                   errorBuilder: (context, error, stackTrace) {
                                 return const Text(
-                                    'There was an error loading the image');
+                                  'There was an error loading the image',
+                                );
                               }),
+                              const SizedBox(height: 50),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

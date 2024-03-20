@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:video_to_frame_color_image/src/rust/api/simple.dart';
 
 class Step2 extends StatefulWidget {
   const Step2({super.key});
@@ -10,20 +13,28 @@ class Step2 extends StatefulWidget {
 }
 
 class _Step2State extends State<Step2> {
-  var selectedPath = Get.arguments;
+  final selectedPath = Get.arguments;
+  late final videoSeconds;
   var errorText = '';
 
-  var interval = TextEditingController(text: '1');
-  var pixelWidth = TextEditingController(text: '1');
-  var imageHeight = TextEditingController(text: '50');
+  final interval = TextEditingController(text: '1');
+  final pixelWidth = TextEditingController(text: '1');
+  final imageHeight = TextEditingController(text: '50');
+
+  @override
+  void initState() {
+    super.initState();
+    // videoSeconds = getVideoSeconds(path: selectedPath);
+    videoSeconds = 10;
+  }
 
   void toStep3() {
-    if (validate(interval.text) &&
+    if (validateInterval(interval.text) &&
         validate(pixelWidth.text) &&
         validate(imageHeight.text)) {
-      var intervalValue = int.parse(interval.text);
-      var pixelWidthValue = int.parse(pixelWidth.text);
-      var imageHeightValue = int.parse(imageHeight.text);
+      final intervalValue = int.parse(interval.text);
+      final pixelWidthValue = int.parse(pixelWidth.text);
+      final imageHeightValue = int.parse(imageHeight.text);
 
       Get.toNamed('/step_3', arguments: [
         selectedPath,
@@ -32,6 +43,10 @@ class _Step2State extends State<Step2> {
         imageHeightValue
       ]);
     }
+  }
+
+  bool validateInterval(String value) {
+    return validate(value) && int.parse(value) < videoSeconds;
   }
 
   bool validate(String value) {
@@ -64,31 +79,48 @@ class _Step2State extends State<Step2> {
       appBar: AppBar(title: const Text('Video to Frame Color Image')),
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width / 2,
+          width: min(MediaQuery.of(context).size.width * 0.8, 400),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
                 controller: interval,
-                decoration:
-                    const InputDecoration(labelText: "Interval in seconds"),
+                decoration: InputDecoration(
+                  labelText: "Frame interval in seconds",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
                 ],
               ),
+              const SizedBox(height: 15),
               TextField(
                 controller: pixelWidth,
-                decoration: const InputDecoration(labelText: "Width per pixel"),
+                decoration: InputDecoration(
+                  labelText: "Width per column in pixels",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
                 ],
               ),
+              const SizedBox(height: 15),
               TextField(
                 controller: imageHeight,
-                decoration: const InputDecoration(labelText: "Height of image"),
+                decoration: InputDecoration(
+                  labelText: "Height of image in pixels",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
@@ -97,7 +129,7 @@ class _Step2State extends State<Step2> {
               errorText != ''
                   ? Text(errorText, style: const TextStyle(color: Colors.red))
                   : const SizedBox.shrink(),
-              const SizedBox(height: 25),
+              const SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

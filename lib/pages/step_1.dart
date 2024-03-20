@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,6 @@ class _Step1State extends State<Step1> {
       setState(() {
         selectedPath = result.files.single.path!;
       });
-      print(selectedPath);
-    } else {
-      print('cancelled');
     }
   }
 
@@ -37,21 +35,23 @@ class _Step1State extends State<Step1> {
       appBar: AppBar(title: const Text('Video to Frame Color Image')),
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width / 2,
+          width: min(MediaQuery.of(context).size.width * 0.8, 400),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: pickFile,
-                    child: const Text('Select video'),
-                  ),
-                  Text(selectedPath),
-                ],
+              ElevatedButton(
+                onPressed: pickFile,
+                child: const Text('Select video'),
               ),
               const SizedBox(height: 25),
+              const Text(
+                'Video path selected:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(selectedPath),
+              const SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
