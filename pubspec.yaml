@@ -16,6 +16,7 @@ dependencies:
   get: ^4.6.6
   file_picker: ^8.0.0+1
   path_provider: ^2.1.2
+  freezed_annotation: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +24,8 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   integration_test:
     sdk: flutter
+  freezed: ^2.4.7
+  build_runner: ^2.4.8
 
 flutter:
   uses-material-design: true
