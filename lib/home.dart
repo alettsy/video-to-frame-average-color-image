@@ -18,12 +18,16 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Welcome to the generator!',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Welcome!',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               const Text(
-                'This app takes in a video path, and some settings, '
+                '\nThis app takes in a video path, and some settings, '
                 'then generates an image based on the average color of each '
                 'frame at each interval',
+              ),
+              const Text(
+                '\nYou can save your generated image to your downloads '
+                'folder at the end!',
               ),
               const SizedBox(height: 50),
               Row(
