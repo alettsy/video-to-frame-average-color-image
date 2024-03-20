@@ -17,9 +17,9 @@ at a time.
 
 ## Getting Started
 
-1. `ffmpeg` and `ffmprobe` are required for this, so they will need to be installed first
+1. `ffmpeg` and `ffprobe` are required for this, so they will need to be installed first
    1. The easiest way to do that is `choco install ffmpeg`
-   2. Make sure that `ffmpeg` and `ffmprobe` are in your `PATH` environment variable
+   2. Make sure that `ffmpeg` and `ffprobe` are in your `PATH` environment variable
 2. Install the `flutter_rust_bridge` crate
    1. `cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'`
    2. Check the GitHub repo for the newest version
