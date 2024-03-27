@@ -38,14 +38,114 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire_generate_image_impl(
+fn wire_ImageGenerator_generate_image_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "ImageGenerator_generate_image",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Stream,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::simple::ImageGenerator>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse((move || {
+                    Result::<_, ()>::Ok(crate::api::simple::ImageGenerator::generate_image(
+                        &api_that,
+                        StreamSink::new(context.rust2dart_context().stream_sink::<_, u32>()),
+                    ))
+                })())
+            }
+        },
+    )
+}
+fn wire_ImageGenerator_get_video_length_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "ImageGenerator_get_video_length",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::simple::ImageGenerator>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse((move || {
+                    Result::<_, ()>::Ok(crate::api::simple::ImageGenerator::get_video_length(
+                        &api_that,
+                    ))
+                })())
+            }
+        },
+    )
+}
+fn wire_ImageGenerator_get_video_seconds_helper_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
     data_len_: i32,
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "generate_image",
+            debug_name: "ImageGenerator_get_video_seconds_helper",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::simple::ImageGenerator>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse((move || {
+                Result::<_, ()>::Ok(
+                    crate::api::simple::ImageGenerator::get_video_seconds_helper(&api_that),
+                )
+            })())
+        },
+    )
+}
+fn wire_ImageGenerator_new_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "ImageGenerator_new",
             port: None,
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
         },
@@ -65,7 +165,7 @@ fn wire_generate_image_impl(
             let api_height = <u32>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse((move || {
-                Result::<_, ()>::Ok(crate::api::simple::generate_image(
+                Result::<_, ()>::Ok(crate::api::simple::ImageGenerator::new(
                     api_path,
                     api_interval,
                     api_pixel_width,
@@ -149,6 +249,30 @@ impl SseDecode for String {
     }
 }
 
+impl SseDecode for crate::api::simple::ImageGenerator {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_framePath = <String>::sse_decode(deserializer);
+        let mut var_path = <String>::sse_decode(deserializer);
+        let mut var_interval = <u32>::sse_decode(deserializer);
+        let mut var_pixelWidth = <u32>::sse_decode(deserializer);
+        let mut var_height = <u32>::sse_decode(deserializer);
+        let mut var_width = <u32>::sse_decode(deserializer);
+        let mut var_lengthInSeconds = <u32>::sse_decode(deserializer);
+        let mut var_currentTime = <u32>::sse_decode(deserializer);
+        return crate::api::simple::ImageGenerator {
+            frame_path: var_framePath,
+            path: var_path,
+            interval: var_interval,
+            pixel_width: var_pixelWidth,
+            height: var_height,
+            width: var_width,
+            length_in_seconds: var_lengthInSeconds,
+            current_time: var_currentTime,
+        };
+    }
+}
+
 impl SseDecode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -203,8 +327,10 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        2 => wire_get_video_seconds_helper_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire_init_app_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire_ImageGenerator_generate_image_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire_ImageGenerator_get_video_length_impl(port, ptr, rust_vec_len, data_len),
+        1 => wire_get_video_seconds_helper_impl(port, ptr, rust_vec_len, data_len),
+        2 => wire_init_app_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -217,17 +343,60 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire_generate_image_impl(ptr, rust_vec_len, data_len),
+        5 => wire_ImageGenerator_get_video_seconds_helper_impl(ptr, rust_vec_len, data_len),
+        3 => wire_ImageGenerator_new_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
 
 // Section: rust2dart
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::simple::ImageGenerator {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.frame_path.into_into_dart().into_dart(),
+            self.path.into_into_dart().into_dart(),
+            self.interval.into_into_dart().into_dart(),
+            self.pixel_width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.width.into_into_dart().into_dart(),
+            self.length_in_seconds.into_into_dart().into_dart(),
+            self.current_time.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::simple::ImageGenerator
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::simple::ImageGenerator>
+    for crate::api::simple::ImageGenerator
+{
+    fn into_into_dart(self) -> crate::api::simple::ImageGenerator {
+        self
+    }
+}
+
 impl SseEncode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.into_bytes(), serializer);
+    }
+}
+
+impl SseEncode for crate::api::simple::ImageGenerator {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.frame_path, serializer);
+        <String>::sse_encode(self.path, serializer);
+        <u32>::sse_encode(self.interval, serializer);
+        <u32>::sse_encode(self.pixel_width, serializer);
+        <u32>::sse_encode(self.height, serializer);
+        <u32>::sse_encode(self.width, serializer);
+        <u32>::sse_encode(self.length_in_seconds, serializer);
+        <u32>::sse_encode(self.current_time, serializer);
     }
 }
 

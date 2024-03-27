@@ -5,8 +5,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_to_frame_color_image/src/rust/api/simple.dart';
-import 'package:video_to_frame_color_image/src/rust/frb_generated.dart';
+
+import '../models/generator_args.dart';
+import '../src/rust/api/simple.dart';
+import '../src/rust/frb_generated.dart';
 
 class Step3 extends StatefulWidget {
   const Step3({super.key});
@@ -18,6 +20,14 @@ class Step3 extends StatefulWidget {
 class _Step3State extends State<Step3> {
   var generating = true;
   var saved = false;
+  var currentTime = 0;
+  var videoSeconds = 0;
+
+  void setCurrentTime(int value) {
+    setState(() {
+      currentTime = value;
+    });
+  }
 
   @override
   void initState() {
@@ -29,6 +39,8 @@ class _Step3State extends State<Step3> {
       parameters[2],
       parameters[3],
     );
+
+    videoSeconds = parameters[4];
   }
 
   void setGenerating(bool value) {
@@ -40,34 +52,60 @@ class _Step3State extends State<Step3> {
   Future<void> deleteOldFiles() async {
     final temp = await getTemporaryDirectory();
 
-    if (temp != null) {
-      final outputFile = File('${temp.path}/output.jpg');
-      final frameFile = File('${temp.path}/frame.jpg');
+    final outputFile = File('${temp.path}/output.jpg');
+    final frameFile = File('${temp.path}/frame.jpg');
 
-      if (outputFile.existsSync()) {
-        outputFile.deleteSync();
-      }
+    if (outputFile.existsSync()) {
+      outputFile.deleteSync();
+    }
 
-      if (frameFile.existsSync()) {
-        frameFile.deleteSync();
-      }
+    if (frameFile.existsSync()) {
+      frameFile.deleteSync();
     }
   }
 
   Future<void> generate(
       String path, int interval, int pixelWidth, int height) async {
     try {
+      final receivePort = ReceivePort();
+      final sendPort = receivePort.sendPort;
+
+      var generatorArgs = ImageGeneratorArgs(
+        path: path,
+        interval: interval,
+        pixelWidth: pixelWidth,
+        height: height,
+      );
+
       await deleteOldFiles();
 
-      await Isolate.run(() async {
+      Isolate.run(() async {
         await RustLib.init();
-        generateImage(
-          path: path,
-          interval: interval,
-          pixelWidth: pixelWidth,
-          height: height,
+
+        var gen = ImageGenerator(
+          path: generatorArgs.path,
+          interval: generatorArgs.interval,
+          pixelWidth: generatorArgs.pixelWidth,
+          height: generatorArgs.height,
         );
+
+        var stream = gen.generateImage().asBroadcastStream();
+
+        int currentTime = 0;
+        while (currentTime < gen.lengthInSeconds) {
+          final time = await stream.first;
+          currentTime = time;
+          sendPort.send(currentTime);
+        }
       });
+
+      await for (var message in receivePort) {
+        if (message >= videoSeconds) {
+          break;
+        }
+
+        setCurrentTime(message);
+      }
     } finally {
       setGenerating(false);
     }
@@ -138,16 +176,19 @@ class _Step3State extends State<Step3> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               generating
-                  ? const Column(
+                  ? Column(
                       children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 10),
-                        Text('Generating your image...'),
+                        Text('$currentTime/$videoSeconds'),
+                        LinearProgressIndicator(
+                          value: currentTime / videoSeconds,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text('Generating your image...'),
                       ],
                     )
                   : FutureBuilder<File>(
                       future: getTemporaryDirectory().then(
-                          (directory) => File(directory.path + "\\output.jpg")),
+                          (directory) => File("${directory.path}\\output.jpg")),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data != null) {
                           return Column(

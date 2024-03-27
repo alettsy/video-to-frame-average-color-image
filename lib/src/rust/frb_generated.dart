@@ -64,7 +64,16 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  void generateImage(
+  Stream<int> imageGeneratorGenerateImage(
+      {required ImageGenerator that, dynamic hint});
+
+  Future<int> imageGeneratorGetVideoLength(
+      {required ImageGenerator that, dynamic hint});
+
+  int imageGeneratorGetVideoSecondsHelper(
+      {required ImageGenerator that, dynamic hint});
+
+  ImageGenerator imageGeneratorNew(
       {required String path,
       required int interval,
       required int pixelWidth,
@@ -85,7 +94,87 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  void generateImage(
+  Stream<int> imageGeneratorGenerateImage(
+      {required ImageGenerator that, dynamic hint}) {
+    return handler.executeStream(StreamTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_image_generator(that, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_u_32,
+        decodeErrorData: null,
+      ),
+      constMeta: kImageGeneratorGenerateImageConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kImageGeneratorGenerateImageConstMeta =>
+      const TaskConstMeta(
+        debugName: "ImageGenerator_generate_image",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<int> imageGeneratorGetVideoLength(
+      {required ImageGenerator that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_image_generator(that, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 6, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_u_32,
+        decodeErrorData: null,
+      ),
+      constMeta: kImageGeneratorGetVideoLengthConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kImageGeneratorGetVideoLengthConstMeta =>
+      const TaskConstMeta(
+        debugName: "ImageGenerator_get_video_length",
+        argNames: ["that"],
+      );
+
+  @override
+  int imageGeneratorGetVideoSecondsHelper(
+      {required ImageGenerator that, dynamic hint}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_image_generator(that, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_u_32,
+        decodeErrorData: null,
+      ),
+      constMeta: kImageGeneratorGetVideoSecondsHelperConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kImageGeneratorGetVideoSecondsHelperConstMeta =>
+      const TaskConstMeta(
+        debugName: "ImageGenerator_get_video_seconds_helper",
+        argNames: ["that"],
+      );
+
+  @override
+  ImageGenerator imageGeneratorNew(
       {required String path,
       required int interval,
       required int pixelWidth,
@@ -98,21 +187,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_32(interval, serializer);
         sse_encode_u_32(pixelWidth, serializer);
         sse_encode_u_32(height, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
+        decodeSuccessData: sse_decode_image_generator,
         decodeErrorData: null,
       ),
-      constMeta: kGenerateImageConstMeta,
+      constMeta: kImageGeneratorNewConstMeta,
       argValues: [path, interval, pixelWidth, height],
       apiImpl: this,
       hint: hint,
     ));
   }
 
-  TaskConstMeta get kGenerateImageConstMeta => const TaskConstMeta(
-        debugName: "generate_image",
+  TaskConstMeta get kImageGeneratorNewConstMeta => const TaskConstMeta(
+        debugName: "ImageGenerator_new",
         argNames: ["path", "interval", "pixelWidth", "height"],
       );
 
@@ -123,7 +212,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 1, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_u_32,
@@ -147,7 +236,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -169,6 +258,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   String dco_decode_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as String;
+  }
+
+  @protected
+  ImageGenerator dco_decode_box_autoadd_image_generator(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_image_generator(raw);
+  }
+
+  @protected
+  ImageGenerator dco_decode_image_generator(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return ImageGenerator.raw(
+      framePath: dco_decode_String(arr[0]),
+      path: dco_decode_String(arr[1]),
+      interval: dco_decode_u_32(arr[2]),
+      pixelWidth: dco_decode_u_32(arr[3]),
+      height: dco_decode_u_32(arr[4]),
+      width: dco_decode_u_32(arr[5]),
+      lengthInSeconds: dco_decode_u_32(arr[6]),
+      currentTime: dco_decode_u_32(arr[7]),
+    );
   }
 
   @protected
@@ -200,6 +313,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_prim_u_8_strict(deserializer);
     return utf8.decoder.convert(inner);
+  }
+
+  @protected
+  ImageGenerator sse_decode_box_autoadd_image_generator(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_image_generator(deserializer));
+  }
+
+  @protected
+  ImageGenerator sse_decode_image_generator(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_framePath = sse_decode_String(deserializer);
+    var var_path = sse_decode_String(deserializer);
+    var var_interval = sse_decode_u_32(deserializer);
+    var var_pixelWidth = sse_decode_u_32(deserializer);
+    var var_height = sse_decode_u_32(deserializer);
+    var var_width = sse_decode_u_32(deserializer);
+    var var_lengthInSeconds = sse_decode_u_32(deserializer);
+    var var_currentTime = sse_decode_u_32(deserializer);
+    return ImageGenerator.raw(
+        framePath: var_framePath,
+        path: var_path,
+        interval: var_interval,
+        pixelWidth: var_pixelWidth,
+        height: var_height,
+        width: var_width,
+        lengthInSeconds: var_lengthInSeconds,
+        currentTime: var_currentTime);
   }
 
   @protected
@@ -242,6 +384,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_String(String self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_image_generator(
+      ImageGenerator self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_image_generator(self, serializer);
+  }
+
+  @protected
+  void sse_encode_image_generator(
+      ImageGenerator self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.framePath, serializer);
+    sse_encode_String(self.path, serializer);
+    sse_encode_u_32(self.interval, serializer);
+    sse_encode_u_32(self.pixelWidth, serializer);
+    sse_encode_u_32(self.height, serializer);
+    sse_encode_u_32(self.width, serializer);
+    sse_encode_u_32(self.lengthInSeconds, serializer);
+    sse_encode_u_32(self.currentTime, serializer);
   }
 
   @protected

@@ -6,24 +6,93 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-/// Generate the image of size [pixel_width] * video time in seconds x [height] from
-/// the video at [path] based on the frames at each [interval] seconds.
-void generateImage(
-        {required String path,
-        required int interval,
-        required int pixelWidth,
-        required int height,
-        dynamic hint}) =>
-    RustLib.instance.api.generateImage(
-        path: path,
-        interval: interval,
-        pixelWidth: pixelWidth,
-        height: height,
-        hint: hint);
-
 /// This function is only used in calls from the Dart code.
 ///
 /// The helper function was needed due to an issue with &String and
 /// &str parameters.
 Future<int> getVideoSecondsHelper({required String path, dynamic hint}) =>
     RustLib.instance.api.getVideoSecondsHelper(path: path, hint: hint);
+
+class ImageGenerator {
+  final String framePath;
+  final String path;
+  final int interval;
+  final int pixelWidth;
+  final int height;
+  final int width;
+  final int lengthInSeconds;
+  final int currentTime;
+
+  const ImageGenerator.raw({
+    required this.framePath,
+    required this.path,
+    required this.interval,
+    required this.pixelWidth,
+    required this.height,
+    required this.width,
+    required this.lengthInSeconds,
+    required this.currentTime,
+  });
+
+  /// Generate the image of size [pixel_width] * video time in seconds x [height] from
+  /// the video at [path] based on the frames at each [interval] seconds.
+  Stream<int> generateImage({dynamic hint}) =>
+      RustLib.instance.api.imageGeneratorGenerateImage(
+        that: this,
+      );
+
+  /// Return the length of the video in seconds.
+  Future<int> getVideoLength({dynamic hint}) =>
+      RustLib.instance.api.imageGeneratorGetVideoLength(
+        that: this,
+      );
+
+  /// This function is only used in calls from the Dart code.
+  ///
+  /// The helper function was needed due to an issue with &String and
+  /// &str parameters.
+  int getVideoSecondsHelper({dynamic hint}) =>
+      RustLib.instance.api.imageGeneratorGetVideoSecondsHelper(
+        that: this,
+      );
+
+  /// Create a new [ImageGenerator] based on the [path] of the video, the [interval] in seconds
+  /// to use, the [pixel_width] of each interval and the [height] of the image.
+  factory ImageGenerator(
+          {required String path,
+          required int interval,
+          required int pixelWidth,
+          required int height,
+          dynamic hint}) =>
+      RustLib.instance.api.imageGeneratorNew(
+          path: path,
+          interval: interval,
+          pixelWidth: pixelWidth,
+          height: height,
+          hint: hint);
+
+  @override
+  int get hashCode =>
+      framePath.hashCode ^
+      path.hashCode ^
+      interval.hashCode ^
+      pixelWidth.hashCode ^
+      height.hashCode ^
+      width.hashCode ^
+      lengthInSeconds.hashCode ^
+      currentTime.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ImageGenerator &&
+          runtimeType == other.runtimeType &&
+          framePath == other.framePath &&
+          path == other.path &&
+          interval == other.interval &&
+          pixelWidth == other.pixelWidth &&
+          height == other.height &&
+          width == other.width &&
+          lengthInSeconds == other.lengthInSeconds &&
+          currentTime == other.currentTime;
+}

@@ -48,7 +48,8 @@ class _Step2State extends State<Step2> {
         selectedPath,
         intervalValue,
         pixelWidthValue,
-        imageHeightValue
+        imageHeightValue,
+        videoSeconds
       ]);
     }
   }
