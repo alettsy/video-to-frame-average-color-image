@@ -42,11 +42,13 @@ as it should even with these. It does make finding issues a little more tricky, 
 
 - Here's an example going through the app to generate an image from a 19 second video:
 <br/>
-<img src="assets/screen_1.png" alt="Home Page" width="250px" />
-<img src="assets/screen_2.png" alt="Video Select" width="250px" />
-<img src="assets/screen_3.png" alt="Settings" width="250px" />
-<img src="assets/screen_4_loading.png" alt="Generating" width="250px" />
-<img src="assets/screen_4_finished.png" alt="Finished" width="250px" />
+<div align="left">
+    <img src="assets/screen_1.png" alt="Home Page" width="250px" />
+    <img src="assets/screen_2.png" alt="Video Select" width="250px" />
+    <img src="assets/screen_3.png" alt="Settings" width="250px" />
+    <img src="assets/screen_4_loading.png" alt="Generating" width="250px" />
+    <img src="assets/screen_4_finished.png" alt="Finished" width="250px" />
+</div>
 
 <br />
 
@@ -63,7 +65,5 @@ finally decided to try and re-create it!
 
 ## Future Plans 
 
-- Use a generator to yield a count each time a new 
-  frame is processed in order to show a progress
-  percentage when generating on the Flutter app 
+- Better styling
 - Parallelization 
